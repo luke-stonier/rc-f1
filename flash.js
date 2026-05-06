@@ -22,6 +22,10 @@ const GCC = TOOLS.gcc || "arm-none-eabi-gcc";
 const GXX = TOOLS.gxx || "arm-none-eabi-g++";
 const TOOLCHAIN_PATH = path.dirname(GCC);
 
+const CLANG = TOOLS.clang || "clang";
+const CLANGXX = TOOLS.clangxx || "clang++";
+const LLVM_RC = TOOLS.llvmrc || "llvm-rc";
+
 function run(cmd, args = [], cwd = ROOT_DIR) {
     console.log(`⚙️  ${cmd} ${args.join(" ")}`);
 
@@ -31,6 +35,9 @@ function run(cmd, args = [], cwd = ROOT_DIR) {
         shell: false,
         env: {
             ...process.env,
+            CC: CLANG,
+            CXX: CLANGXX,
+            RC: LLVM_RC,
             PICO_SDK_FETCH_FROM_GIT: "1",
         },
     });
@@ -92,6 +99,7 @@ function ensureBuildConfigured() {
             "-G",
             "Ninja",
             `-DCMAKE_MAKE_PROGRAM=${NINJA}`,
+            `-DCMAKE_RC_COMPILER=${LLVM_RC}`,
             `-DPICO_TOOLCHAIN_PATH=${TOOLCHAIN_PATH}`,
             "-DPICO_BOARD=pico_w",
             "..",
@@ -110,87 +118,39 @@ function build() {
 }
 
 function flash() {
-    run(PICOTOOL, ["load", UF2_PATH, "-f"]);
-}
+    try {
+        run(PICOTOOL, ["reboot", "-f", "-u"]);
+        // Give USB time to re-enumerate into BOOTSEL
+        execFileSync(process.platform === "win32" ? "timeout" : "sleep",
+            process.platform === "win32" ? ["/t", "2", "/nobreak"] : ["2"],
+            { stdio: "ignore", shell: true }
+        );
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+        run(PICOTOOL, ["load", "-x", UF2_PATH]);
+        return;
+    } catch {
+        if (process.platform !== "win32") throw new Error("picotool flash failed");
 
-async function findSerial() {
-    for (let i = 0; i < 20; i++) {
-        const ports = await SerialPort.list();
+        console.log("⚠️  picotool failed; trying UF2 drive copy...");
 
-        const pico = ports.find(port => {
-            const text = [
-                port.path,
-                port.manufacturer,
-                port.friendlyName,
-                port.pnpId,
-                port.serialNumber,
-            ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
+        for (const drive of "DEFGHIJKLMNOPQRSTUVWXYZ") {
+            const infoPath = `${drive}:\\INFO_UF2.TXT`;
 
-            return (
-                text.includes("pico") ||
-                text.includes("raspberry") ||
-                text.includes("usbmodem") ||
-                text.includes("rp2040") ||
-                text.includes("rp2350")
-            );
-        });
-
-        if (pico) {
-            return pico.path;
+            if (fs.existsSync(infoPath)) {
+                console.log(`💾 Copying UF2 to ${drive}:\\`);
+                fs.copyFileSync(UF2_PATH, `${drive}:\\${path.basename(UF2_PATH)}`);
+                return;
+            }
         }
 
-        await sleep(250);
+        throw new Error("No RPI-RP2 UF2 drive found");
     }
-
-    console.error("❌ No Pico serial device found");
-    console.error("👉 Make sure the Pico is connected and running USB serial.");
-    process.exit(1);
-}
-
-function openSerial(portPath) {
-    console.log(`📡 Connecting to ${portPath}\n`);
-
-    const port = new SerialPort({
-        path: portPath,
-        baudRate: 115200,
-    });
-
-    if (process.stdin.isTTY) {
-        process.stdin.setRawMode(true);
-    }
-
-    process.stdin.resume();
-    process.stdin.pipe(port);
-    port.pipe(process.stdout);
-
-    process.stdin.on("data", data => {
-        if (data.length === 1 && data[0] === 0x03) {
-            process.exit(0);
-        }
-    });
-
-    port.on("error", err => {
-        console.error(`❌ Serial error: ${err.message}`);
-        process.exit(1);
-    });
 }
 
 async function main() {
     ensureTools();
     build();
-    flash();
-
-    console.log("⏳ Waiting for Pico serial...");
-    const port = await findSerial();
-
-    openSerial(port);
+    await flash();
 }
 
 main().catch(err => {

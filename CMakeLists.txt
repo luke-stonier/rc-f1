@@ -8,14 +8,18 @@ project(rc_f1 C CXX ASM)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
+set(PICOTOOL_FORCE_FETCH_FROM_GIT OFF CACHE BOOL "" FORCE)
+set(PICOTOOL_FORCE_FETCH_FROM_GIT_PATH "" CACHE PATH "" FORCE)
 
 pico_sdk_init()
 
 add_executable(rc_f1
     main.c
     drive.c
+    hardware/controller/ds4_controller.c
+    hardware/servo/servo.c
+    hardware/relay/relay.c
     picow_ds4/src/bt_hid.c
-    picow_ds4/src/ds4_controller.c
 )
 
 pico_enable_stdio_usb(rc_f1 1)

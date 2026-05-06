@@ -61,6 +61,7 @@ function ensureGitSubmodules() {
     run("git", ["submodule", "update", "--init", "--recursive"]);
 }
 
+
 function removeStaleBuild() {
     const cachePath = path.join(ROOT_DIR, "build", "CMakeCache.txt");
 
@@ -83,6 +84,18 @@ function removeStaleBuild() {
             force: true,
         });
     }
+
+    const buildDir = path.join(ROOT_DIR, "build");
+
+    if (!fs.existsSync(buildDir)) {
+        return;
+    }
+
+    console.log("🧹 Removing build directory...");
+    fs.rmSync(buildDir, {
+        recursive: true,
+        force: true,
+    });
 }
 
 function addPath(dir) {
@@ -109,6 +122,7 @@ function findExe(name) {
         "C:\\Program Files\\Raspberry Pi\\Pico SDK v2.1.0\\picotool",
         "C:\\Program Files\\Raspberry Pi\\Pico SDK v2.2.0\\picotool",
         "C:\\Program Files\\Raspberry Pi\\Pico SDK v1.5.1\\gcc-arm-none-eabi\\bin",
+        "C:\\Program Files\\LLVM\\bin",
     ];
 
     for (const dir of directDirs) {
@@ -246,6 +260,35 @@ if (isWin) {
         "--accept-package-agreements",
         "--accept-source-agreements",
     ]);
+
+    tryRun("winget", [
+        "install",
+        "--id",
+        "Microsoft.VisualStudio.2022.BuildTools",
+        "-e",
+        "--override",
+        "--quiet --wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended",
+        "--accept-package-agreements",
+        "--accept-source-agreements",
+    ]);
+
+    tryRun("winget", [
+        "install",
+        "--id",
+        "LLVM.LLVM",
+        "-e",
+        "--accept-package-agreements",
+        "--accept-source-agreements",
+    ]);
+
+    tryRun("winget", [
+        "install",
+        "--id",
+        "Microsoft.WindowsSDK.10.0.22621",
+        "-e",
+        "--accept-package-agreements",
+        "--accept-source-agreements",
+    ]);
 }
 
 const tools = {
@@ -256,6 +299,9 @@ const tools = {
     picotool: findExe("picotool"),
     gcc: findExe("arm-none-eabi-gcc"),
     gxx: findExe("arm-none-eabi-g++"),
+    clang: findExe("clang"),
+    clangxx: findExe("clang++"),
+    llvmrc: findExe("llvm-rc"),
 };
 
 refreshPathFromTools(tools);

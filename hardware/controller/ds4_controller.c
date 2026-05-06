@@ -1,9 +1,8 @@
 #include "ds4_controller.h"
+#include "bt_hid.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
-
-#include "bt_hid.h"
 
 static inline int8_t clamp8(int16_t value) {
     if (value > 127) return 127;
