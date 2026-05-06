@@ -18,6 +18,10 @@ const CMAKE = TOOLS.cmake || "cmake";
 const NINJA = TOOLS.ninja || "ninja";
 const PICOTOOL = TOOLS.picotool || "picotool";
 
+const GCC = TOOLS.gcc || "arm-none-eabi-gcc";
+const GXX = TOOLS.gxx || "arm-none-eabi-g++";
+const TOOLCHAIN_PATH = path.dirname(GCC);
+
 function run(cmd, args = [], cwd = ROOT_DIR) {
     console.log(`⚙️  ${cmd} ${args.join(" ")}`);
 
@@ -88,6 +92,7 @@ function ensureBuildConfigured() {
             "-G",
             "Ninja",
             `-DCMAKE_MAKE_PROGRAM=${NINJA}`,
+            `-DPICO_TOOLCHAIN_PATH=${TOOLCHAIN_PATH}`,
             "-DPICO_BOARD=pico_w",
             "..",
         ], BUILD_DIR);
