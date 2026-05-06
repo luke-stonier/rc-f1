@@ -1,0 +1,3 @@
+[submodule "picow_ds4"]
+	path = picow_ds4
+	url = https://github.com/usedbytes/picow_ds4.git
