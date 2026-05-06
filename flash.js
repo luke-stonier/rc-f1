@@ -8,6 +8,15 @@ const { SerialPort } = require("serialport");
 const ROOT_DIR = __dirname;
 const BUILD_DIR = path.join(ROOT_DIR, "build");
 const UF2_PATH = path.join(BUILD_DIR, "rc_f1.uf2");
+const TOOLS_PATH = path.join(ROOT_DIR, ".rc-f1-tools.json");
+
+const TOOLS = fs.existsSync(TOOLS_PATH)
+    ? JSON.parse(fs.readFileSync(TOOLS_PATH, "utf8"))
+    : {};
+
+const CMAKE = TOOLS.cmake || "cmake";
+const NINJA = TOOLS.ninja || "ninja";
+const PICOTOOL = TOOLS.picotool || "picotool";
 
 function run(cmd, args = [], cwd = ROOT_DIR) {
     console.log(`⚙️  ${cmd} ${args.join(" ")}`);
@@ -15,27 +24,79 @@ function run(cmd, args = [], cwd = ROOT_DIR) {
     execFileSync(cmd, args, {
         cwd,
         stdio: "inherit",
+        shell: false,
         env: {
             ...process.env,
             PICO_SDK_FETCH_FROM_GIT: "1",
         },
-        shell: process.platform === "win32",
     });
 }
 
+function has(cmd, args = ["--version"]) {
+    if (path.isAbsolute(cmd) && fs.existsSync(cmd)) {
+        return true;
+    }
+
+    try {
+        execFileSync(cmd, args, {
+            stdio: "ignore",
+            shell: false,
+            env: process.env,
+        });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function requireTool(name, cmd) {
+    if (has(cmd)) return;
+
+    console.error(`❌ ${name} not found: ${cmd}`);
+    console.error("👉 Run:");
+    console.error("   npm run setup");
+    process.exit(1);
+}
+
+function ensureTools() {
+    requireTool("CMake", CMAKE);
+    requireTool("Ninja", NINJA);
+    requireTool("picotool", PICOTOOL);
+}
+
 function ensureBuildConfigured() {
+    const cachePath = path.join(BUILD_DIR, "CMakeCache.txt");
+
+    if (fs.existsSync(cachePath)) {
+        const cache = fs.readFileSync(cachePath, "utf8");
+
+        if (
+            process.platform === "win32" &&
+            (cache.includes("/opt/homebrew") || cache.includes("/Volumes/"))
+        ) {
+            console.log("🧹 Removing stale macOS build directory...");
+            fs.rmSync(BUILD_DIR, { recursive: true, force: true });
+        }
+    }
+
     if (!fs.existsSync(BUILD_DIR)) {
         fs.mkdirSync(BUILD_DIR);
     }
 
     if (!fs.existsSync(path.join(BUILD_DIR, "build.ninja"))) {
-        run("cmake", ["-G", "Ninja", "-DPICO_BOARD=pico_w", ".."], BUILD_DIR);
+        run(CMAKE, [
+            "-G",
+            "Ninja",
+            `-DCMAKE_MAKE_PROGRAM=${NINJA}`,
+            "-DPICO_BOARD=pico_w",
+            "..",
+        ], BUILD_DIR);
     }
 }
 
 function build() {
     ensureBuildConfigured();
-    run("ninja", [], BUILD_DIR);
+    run(NINJA, [], BUILD_DIR);
 
     if (!fs.existsSync(UF2_PATH)) {
         console.error(`❌ UF2 not found: ${UF2_PATH}`);
@@ -44,7 +105,7 @@ function build() {
 }
 
 function flash() {
-    run("picotool", ["load", UF2_PATH, "-f"]);
+    run(PICOTOOL, ["load", UF2_PATH, "-f"]);
 }
 
 function sleep(ms) {
@@ -84,6 +145,7 @@ async function findSerial() {
     }
 
     console.error("❌ No Pico serial device found");
+    console.error("👉 Make sure the Pico is connected and running USB serial.");
     process.exit(1);
 }
 
@@ -104,7 +166,6 @@ function openSerial(portPath) {
     port.pipe(process.stdout);
 
     process.stdin.on("data", data => {
-        // Ctrl+C
         if (data.length === 1 && data[0] === 0x03) {
             process.exit(0);
         }
@@ -117,6 +178,7 @@ function openSerial(portPath) {
 }
 
 async function main() {
+    ensureTools();
     build();
     flash();
 
@@ -127,6 +189,6 @@ async function main() {
 }
 
 main().catch(err => {
-    console.error(err);
+    console.error(err.message || err);
     process.exit(1);
 });

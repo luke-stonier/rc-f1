@@ -47,6 +47,44 @@ function canRun(command, args = ["--version"]) {
     }
 }
 
+function ensureGitSubmodules() {
+    if (!fs.existsSync(path.join(ROOT_DIR, ".git"))) {
+        return;
+    }
+
+    if (!canRun("git")) {
+        console.log("⚠️  git not found; skipping submodule setup.");
+        return;
+    }
+
+    console.log("🧩 Initialising git submodules...");
+    run("git", ["submodule", "update", "--init", "--recursive"]);
+}
+
+function removeStaleBuild() {
+    const cachePath = path.join(ROOT_DIR, "build", "CMakeCache.txt");
+
+    if (!fs.existsSync(cachePath)) {
+        return;
+    }
+
+    const cache = fs.readFileSync(cachePath, "utf8");
+
+    const stale =
+        (process.platform === "win32" &&
+            (cache.includes("/opt/homebrew") || cache.includes("/Volumes/"))) ||
+        (process.platform !== "win32" &&
+            cache.match(/[A-Z]:\\/));
+
+    if (stale) {
+        console.log("🧹 Removing stale cross-platform build directory...");
+        fs.rmSync(path.join(ROOT_DIR, "build"), {
+            recursive: true,
+            force: true,
+        });
+    }
+}
+
 function addPath(dir) {
     if (!dir || !fs.existsSync(dir)) return;
 
@@ -65,6 +103,11 @@ function findExe(name) {
         "C:\\Program Files\\CMake\\bin",
         "C:\\Program Files\\Ninja",
         path.join(process.env.LOCALAPPDATA || "", "Microsoft", "WinGet", "Links"),
+
+        "C:\\Program Files\\Raspberry Pi\\Pico SDK v1.5.1\\picotool",
+        "C:\\Program Files\\Raspberry Pi\\Pico SDK v2.0.0\\picotool",
+        "C:\\Program Files\\Raspberry Pi\\Pico SDK v2.1.0\\picotool",
+        "C:\\Program Files\\Raspberry Pi\\Pico SDK v2.2.0\\picotool",
     ];
 
     for (const dir of directDirs) {
@@ -103,12 +146,20 @@ function installPicoWindowsTools() {
         "-ExecutionPolicy",
         "Bypass",
         "-Command",
-        `Invoke-WebRequest -Uri "${url}" -OutFile "${installer}"`,
+        `$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri "${url}" -OutFile "${installer}"`,
     ]);
 
     console.log("🛠️  Installing Pico SDK tools...");
 
-    run(installer, ["/S"]);
+    run("powershell.exe", [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        `Start-Process -FilePath "${installer}" -ArgumentList "/S" -Wait -Verb RunAs`,
+    ]);
+
+    console.log("✅  Pico SDK tools Installed!");
 }
 
 function scanForFile(dir, filename, depth) {
@@ -156,6 +207,9 @@ if (!tryRun(NPM, NPM_ARGS)) {
     process.exit(1);
 }
 
+ensureGitSubmodules();
+removeStaleBuild();
+
 if (isMac) {
     if (!canRun("brew")) {
         console.log("❌ Homebrew missing. Install it first: https://brew.sh");
@@ -195,6 +249,7 @@ if (isWin) {
 
 const tools = {
     npm: NPM,
+    git: findExe("git"),
     cmake: findExe("cmake"),
     ninja: findExe("ninja"),
     picotool: findExe("picotool"),
