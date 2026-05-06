@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "setup": "node setup.js",
+    "flash": "node flash.js"
+  },
   "dependencies": {
     "serialport": "^13.0.0"
   }
