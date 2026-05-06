@@ -1,0 +1,21 @@
+# ninja log v7
+1	11	1778019782825086997	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-mkdir	f5cadfdcd9cec625
+1	11	1778019782825086997	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-mkdir	f5cadfdcd9cec625
+11	38674	1778019821488022648	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-download	b55f876a9ca401c6
+11	38674	1778019821488022648	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-download	b55f876a9ca401c6
+38674	40261	1778019821488805773	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-update	1e1057ade9e760ff
+38674	40261	1778019821488805773	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-update	1e1057ade9e760ff
+40261	40272	1778019823086269363	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-patch	d8db7a991d2ed604
+40261	40272	1778019823086269363	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-patch	d8db7a991d2ed604
+40273	40283	1778019823096819413	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-configure	1de767b864a49ee2
+40273	40283	1778019823096819413	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-configure	1de767b864a49ee2
+40283	40293	1778019823107153337	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-build	731d44476b65c855
+40283	40293	1778019823107153337	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-build	731d44476b65c855
+40293	40304	1778019823117522512	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-install	97ef46647eba8084
+40293	40304	1778019823117522512	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-install	97ef46647eba8084
+40304	40314	1778019823127780437	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-test	1307f7a894533b92
+40304	40314	1778019823127780437	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-test	1307f7a894533b92
+40314	40328	1778019823141508864	CMakeFiles/pico_sdk-populate-complete	7e010612778e0e9a
+40314	40328	1778019823141508864	pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-done	7e010612778e0e9a
+40314	40328	1778019823141508864	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/pico_sdk-populate-complete	7e010612778e0e9a
+40314	40328	1778019823141508864	/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-done	7e010612778e0e9a

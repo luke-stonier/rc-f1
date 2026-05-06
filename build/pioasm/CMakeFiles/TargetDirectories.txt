@@ -1,0 +1,7 @@
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/pioasm.dir
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/edit_cache.dir
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/rebuild_cache.dir
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/list_install_components.dir
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/install.dir
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/install/local.dir
+/Volumes/Projects/projects/rc-f1/build/pioasm/CMakeFiles/install/strip.dir

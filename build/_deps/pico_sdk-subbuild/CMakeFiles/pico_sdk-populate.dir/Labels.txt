@@ -1,0 +1,14 @@
+# Target labels
+ pico_sdk-populate
+# Source files and their labels
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/pico_sdk-populate
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/pico_sdk-populate.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/pico_sdk-populate-complete.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-build.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-configure.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-download.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-install.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-mkdir.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-patch.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-test.rule
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/pico_sdk-populate-prefix/src/pico_sdk-populate-stamp/pico_sdk-populate-update.rule

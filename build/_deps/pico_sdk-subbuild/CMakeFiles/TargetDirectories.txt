@@ -1,0 +1,3 @@
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/pico_sdk-populate.dir
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/edit_cache.dir
+/Volumes/Projects/projects/rc-f1/build/_deps/pico_sdk-subbuild/CMakeFiles/rebuild_cache.dir
